@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Flight Search</title>
+    <style>
+      /* Add some basic styling */
+      .form-group {
+        margin-bottom: 15px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      table,
+      th,
+      td {
+        border: 1px solid black;
+      }
+      th,
+      td {
+        padding: 10px;
+        text-align: left;
+      }
+    </style>
+  </head>
+  <body>
+    <form id="flightForm">
+      <input
+        type="hidden"
+        name="access_key"
+        value="07a9c7ee8fac2b94f28e8ab3c607d07c"
+      />
+
+      <input
+        id="flightStatus"
+        type="hidden"
+        name="flight_status"
+        value="scheduled"
+      />
+
+      <div class="form-group">
+        <label for="departureAirportCode">Departure Airport Code:</label>
+        <input
+          type="text"
+          class="form-control"
+          id="departureAirportCode"
+          name="departureAirportCode"
+          value="JFK"
+          required
+        />
+      </div>
+      <div class="form-group">
+        <label for="destinationAirportCode">Destination Airport Code:</label>
+        <input
+          type="text"
+          class="form-control"
+          id="destinationAirportCode"
+          name="destinationAirportCode"
+          value="LHR"
+          required
+        />
+      </div>
+
+      <!-- TODO: API does not support departure date, need to find a valid api -->
+      <!-- <div class="form-group">
+        <label for="departureDate">Departure Date:</label>
+        <input
+          type="date"
+          class="form-control"
+          id="departureDate"
+          name="departureDate"
+          value="2023-12-25"
+          required
+        />
+      </div> -->
+
+      <button type="submit" class="btn btn-primary">Search Flights</button>
+    </form>
+    <div id="results"></div>
+  </body>
+</html>
+<script>
+  document
+    .getElementById("flightForm")
+    .addEventListener("submit", function (event) {
+      event.preventDefault(); // Prevent the default form submission
+
+      const accessKey = document.querySelector(
+        'input[name="access_key"]'
+      ).value;
+      const departureAirportCode = document.getElementById(
+        "departureAirportCode"
+      ).value;
+      const destinationAirportCode = document.getElementById(
+        "destinationAirportCode"
+      ).value;
+      const flightStatus = document.getElementById("flightStatus").value;
+
+      const apiUrl = `http://api.aviationstack.com/v1/flights?access_key=${accessKey}&iata=${departureAirportCode}&arr_iata=${destinationAirportCode}&flight_status=${flightStatus}`;
+      console.log(apiUrl); // Log the API URL to the console
+
+      fetch(apiUrl)
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.error && data.error.code === "function_access_restricted") {
+            displayError(
+              "This feature is not available under your current subscription plan."
+            );
+          } else {
+            displayResults(data);
+          }
+        })
+        .catch((error) => {
+          console.error("Error fetching data:", error);
+          displayError("An error occurred while fetching data.");
+        });
+    });
+
+  function displayResults(data) {
+    const resultsDiv = document.getElementById("results");
+    resultsDiv.innerHTML = ""; // Clear previous results
+
+    if (data.data && data.data.length > 0) {
+      const table = document.createElement("table");
+      const headerRow = document.createElement("tr");
+      headerRow.innerHTML =
+        "<th>Flight Number</th><th>Airline</th><th>Departure</th><th>Arrival</th><th>Status</th>";
+      table.appendChild(headerRow);
+
+      data.data.forEach((flight) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+                    <td>${flight.flight.number}</td>
+                    <td>${flight.airline.name}</td>
+                    <td>${flight.departure.airport}</td>
+                    <td>${flight.arrival.airport}</td>
+                    <td>${flight.flight_status}</td>
+                `;
+        table.appendChild(row);
+      });
+
+      resultsDiv.appendChild(table);
+    } else {
+      resultsDiv.innerHTML = "<p>No flights found.</p>";
+    }
+  }
+
+  function displayError(message) {
+    const resultsDiv = document.getElementById("results");
+    resultsDiv.innerHTML = `<p style="color: red;">${message}</p>`;
+  }
+</script>
