@@ -1,4 +1,4 @@
-package com.example.flightapi;
+package com.example.flightapi.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;

@@ -1,4 +1,4 @@
-package com.example.flightapi;
+package com.example.flightapi.config;
 
 import com.example.flightapi.service.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;

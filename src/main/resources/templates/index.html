@@ -79,6 +79,9 @@
       <button type="submit" class="btn btn-primary">Search Flights</button>
     </form>
     <div id="results"></div>
+    <form th:action="@{/logout}" method="post">
+      <button type="submit">Sign Out</button>
+  </form>
   </body>
 </html>
 <script>
