@@ -2,27 +2,196 @@
 <html xmlns:th="http://www.thymeleaf.org">
   <head>
     <title>Login</title>
+    <link rel="stylesheet" href="styles.css" />
   </head>
+
+  <style>
+    body {
+      font-family: "Arial", sans-serif;
+      background: linear-gradient(135deg, #87ceeb, #e0f6ff);
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* Cloud animation */
+    @keyframes float {
+      0% {
+        transform: translatey(0px);
+      }
+      50% {
+        transform: translatey(-20px);
+      }
+      100% {
+        transform: translatey(0px);
+      }
+    }
+
+    .cloud {
+      position: absolute;
+      width: 200px;
+      height: 60px;
+      background-color: #fff;
+      border-radius: 200px;
+      animation: float 6s ease-in-out infinite;
+    }
+
+    .cloud:before,
+    .cloud:after {
+      content: "";
+      position: absolute;
+      background-color: #fff;
+      border-radius: 50%;
+    }
+
+    .cloud:before {
+      width: 80px;
+      height: 80px;
+      top: -40px;
+      left: 10px;
+    }
+
+    .cloud:after {
+      width: 100px;
+      height: 100px;
+      top: -55px;
+      right: 15px;
+    }
+
+    .cloud:nth-child(1) {
+      top: 10%;
+      left: 10%;
+      transform: scale(0.5);
+      opacity: 0.8;
+    }
+
+    .cloud:nth-child(2) {
+      top: 20%;
+      right: 15%;
+      transform: scale(0.3);
+      opacity: 0.6;
+      animation-delay: 2s;
+    }
+
+    /* Login container */
+    .login-container {
+      background-color: rgba(255, 255, 255, 0.8);
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+      backdrop-filter: blur(4px);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      width: 100%;
+      max-width: 400px;
+      z-index: 1;
+      position: absolute;
+      top: 300px;
+      left: 400px;
+    }
+
+    .login-container h2 {
+      color: #333;
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    /* Form styles */
+    .login-form {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: #555;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 1rem;
+      transition: border-color 0.3s ease;
+    }
+
+    .form-group input:focus {
+      border-color: #4a90e2;
+      outline: none;
+    }
+
+    .login-button {
+      background-color: #4a90e2;
+      color: white;
+      border: none;
+      padding: 0.75rem;
+      border-radius: 4px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .login-button:hover {
+      background-color: #357abd;
+    }
+
+    .register {
+      text-align: center;
+      margin-top: 1rem;
+    }
+
+    .register a {
+      color: #4a90e2;
+      text-decoration: none;
+    }
+
+    .register a:hover {
+      text-decoration: underline;
+    }
+
+    h1 {
+      font-size: 53px;
+      color: #333;
+      text-align: center;
+      margin-top: 2rem;
+      font-family: monospace;
+    }
+
+    /* Responsive design */
+    @media (max-width: 480px) {
+      .login-container {
+        padding: 1.5rem;
+      }
+    }
+  </style>
+
   <body>
-    <h1>Login</h1>
-    <form th:action="@{/login}" method="post">
-      <div>
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required />
+    <div class="cloud"></div>
+    <div class="cloud"></div>
+    <h1>ReImagined Adventures</h1>
+    <div class="login-container">
+      <h2>Login to Your Account</h2>
+      <form th:action="@{/login}" method="post" class="login-form">
+        <div class="form-group">
+          <label for="username">Username</label>
+          <input type="text" id="username" name="username" required />
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" required />
+        </div>
+        <button type="submit" class="login-button">Login</button>
+      </form>
+      <div th:if="${error}">
+        <p th:text="${error}"></p>
       </div>
-      <div>
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required />
+      <div class="register">
+        <a th:href="@{/register}">Register</a>
       </div>
-      <div>
-        <button type="submit">Login</button>
-      </div>
-    </form>
-    <div th:if="${error}">
-      <p th:text="${error}"></p>
-    </div>
-    <div>
-      <a th:href="@{/register}">Register</a>
     </div>
   </body>
 </html>
