@@ -1,52 +1,33 @@
 package com.example.flightapi.config;
 
-import com.example.flightapi.service.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.beans.factory.annotation.Autowired;
 
 @Configuration
-@EnableWebSecurity
-public class SecurityConfig {
+public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final CustomUserDetailsService userDetailsService;
-
-    public SecurityConfig(CustomUserDetailsService userDetailsService) {
-        this.userDetailsService = userDetailsService;
-    }
-
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
         http
             .authorizeRequests()
-                .antMatchers("/register", "/login").permitAll()
-                .anyRequest().authenticated()
+                .antMatchers("/login", "/register", "/css/**", "/js/**").permitAll() // Allow access to login and static resources
+                .anyRequest().authenticated() // Restrict access to authenticated users
                 .and()
             .formLogin()
-                .loginPage("/login")
-                .defaultSuccessUrl("/", true)
-                .failureUrl("/login?error=true")
+                .loginPage("/login") // Custom login page
+                .defaultSuccessUrl("/", true) // Redirect to index.html on successful login
+                .permitAll()
                 .and()
             .logout()
-                .logoutSuccessUrl("/login")
                 .permitAll();
-        return http.build();
     }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
-    }
-
-    @Autowired
-    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
     }
 }

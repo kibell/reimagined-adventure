@@ -5,393 +5,195 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Flight Search</title>
     <style>
-      /* Base styles and CSS reset */
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
-
       body {
         font-family: "Arial", sans-serif;
         background: linear-gradient(135deg, #87ceeb, #e0f6ff);
-        min-height: 100vh;
-        padding: 20px;
-        color: #333;
+        height: 100vh;
+        overflow: hidden;
       }
-
-      /* Cloud animation */
-      @keyframes float {
-        0% {
-          transform: translatey(0px);
-        }
-        50% {
-          transform: translatey(-20px);
-        }
-        100% {
-          transform: translatey(0px);
-        }
+      h1 {
+        text-align: center;
       }
-
-      body::before,
-      body::after {
-        content: "";
-        position: fixed;
-        width: 300px;
-        height: 300px;
-        background: rgba(255, 255, 255, 0.8);
-        border-radius: 100%;
-        z-index: -1;
-      }
-
-      body::before {
-        top: -150px;
-        left: -150px;
-        animation: float 6s ease-in-out infinite;
-      }
-
-      body::after {
-        bottom: -150px;
-        right: -150px;
-        animation: float 6s ease-in-out infinite 3s;
-      }
-
-      /* Form styles */
-      #flightForm {
-        background-color: rgba(255, 255, 255, 0.9);
-        padding: 2rem;
-        border-radius: 10px;
-        box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
-        backdrop-filter: blur(4px);
-        border: 1px solid rgba(255, 255, 255, 0.18);
-        max-width: 500px;
-        margin: 0 auto 2rem;
-      }
-
-      .form-group {
-        margin-bottom: 1.5rem;
-      }
-
-      label {
-        display: block;
-        margin-bottom: 0.5rem;
-        color: #555;
-        font-weight: bold;
-      }
-
-      input[type="text"],
-      input[type="date"] {
-        width: 100%;
-        padding: 0.75rem;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        font-size: 1rem;
-        transition: border-color 0.3s ease, box-shadow 0.3s ease;
-      }
-
-      input[type="text"]:focus,
-      input[type="date"]:focus {
-        border-color: #4a90e2;
-        box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
-        outline: none;
-      }
-
-      button[type="submit"] {
-        background-color: #4a90e2;
-        color: white;
-        border: none;
-        padding: 0.75rem 1.5rem;
-        border-radius: 4px;
-        font-size: 1rem;
-        cursor: pointer;
-        transition: background-color 0.3s ease, transform 0.1s ease;
-        width: 100%;
-      }
-
-      button[type="submit"]:hover {
-        background-color: #357abd;
-      }
-
-      button[type="submit"]:active {
-        transform: scale(0.98);
-      }
-
-      /* Results styles */
-      #results {
+      .search-container {
         display: flex;
         flex-wrap: wrap;
-        justify-content: center;
-        gap: 20px;
+        gap: 10px;
+        margin-bottom: 20px;
       }
-
-      .flight-card {
-        background-color: rgba(255, 255, 255, 0.9);
-        border-radius: 10px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        padding: 1.5rem;
-        width: 300px;
-        transition: transform 0.3s ease;
+      .search-container input,
+      .search-container button {
+        padding: 10px;
+        font-size: 16px;
       }
-
-      .flight-card:hover {
-        transform: translateY(-5px);
+      .search-container input {
+        flex: 1;
+        min-width: 200px;
       }
-
-      .flight-card h3 {
-        margin-bottom: 1rem;
-        color: #4a90e2;
-      }
-
-      .flight-info {
-        margin-bottom: 0.5rem;
-      }
-
-      .flight-info strong {
-        font-weight: bold;
-        color: #555;
-      }
-
-      .flight-status {
-        margin-top: 1rem;
-        padding: 0.5rem;
-        border-radius: 4px;
-        text-align: center;
-        font-weight: bold;
-      }
-
-      .status-scheduled {
-        background-color: #fff9c4;
-        color: #ffa000;
-      }
-
-      .status-active {
-        background-color: #c8e6c9;
-        color: #388e3c;
-      }
-
-      .status-landed {
-        background-color: #bbdefb;
-        color: #1976d2;
-      }
-
-      .status-cancelled {
-        background-color: #ffcdd2;
-        color: #d32f2f;
-      }
-
-      /* Error message */
-      .error-message {
-        background-color: #ffcdd2;
-        color: #d32f2f;
-        padding: 1rem;
-        border-radius: 4px;
-        text-align: center;
-        margin-top: 1rem;
-      }
-
-      /* Sign Out button */
-      form[action="/logout"] {
-        text-align: center;
-        margin-top: 2rem;
-      }
-
-      form[action="/logout"] button {
-        background-color: #ff5722;
+      .search-container button {
+        background-color: #4caf50;
         color: white;
         border: none;
-        padding: 0.5rem 1rem;
-        border-radius: 4px;
-        font-size: 1rem;
         cursor: pointer;
-        transition: background-color 0.3s ease;
+        transition: background-color 0.3s;
       }
-
-      form[action="/logout"] button:hover {
-        background-color: #e64a19;
+      .search-container button:hover {
+        background-color: #45a049;
       }
-
-      /* Responsive design */
+      .search-container button:disabled {
+        background-color: #cccccc;
+        cursor: not-allowed;
+      }
+      .results-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
+      }
+      .card {
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 15px;
+        background-color: #f9f9f9;
+      }
+      .error {
+        color: red;
+        text-align: center;
+      }
+      .loading {
+        text-align: center;
+      }
       @media (max-width: 600px) {
-        #flightForm {
-          padding: 1.5rem;
+        .search-container {
+          flex-direction: column;
         }
-
-        .flight-card {
+        .search-container input,
+        .search-container button {
           width: 100%;
         }
-      }
-
-      /* Airplane animation */
-      @keyframes fly {
-        0% {
-          transform: translateX(-100%) translateY(0);
-        }
-        100% {
-          transform: translateX(100vw) translateY(-100px);
-        }
-      }
-
-      .airplane {
-        position: fixed;
-        font-size: 24px;
-        top: 5%;
-        left: -50px;
-        animation: fly 15s linear infinite;
-        z-index: -1;
       }
     </style>
   </head>
   <body>
-    <form id="flightForm">
+    <h1>Flight Search</h1>
+    <div class="search-container">
       <input
-        type="hidden"
-        name="access_key"
-        value="07a9c7ee8fac2b94f28e8ab3c607d07c"
+        type="text"
+        id="departureAirportCode"
+        placeholder="Departure Airport Code"
+        aria-label="Departure Airport Code"
       />
-
       <input
-        id="flightStatus"
-        type="hidden"
-        name="flight_status"
-        value="scheduled"
+        type="text"
+        id="destinationAirportCode"
+        placeholder="Destination Airport Code"
+        aria-label="Destination Airport Code"
       />
+      <input
+        type="date"
+        id="departureDate"
+        placeholder="Departure Date"
+        aria-label="Departure Date"
+      />
+      <button id="searchButton" onclick="searchFlights()">
+        Search Flights
+      </button>
+    </div>
+    <div id="results" class="results-container"></div>
 
-      <div class="form-group">
-        <label for="departureAirportCode">Departure Airport Code:</label>
-        <input
-          type="text"
-          class="form-control"
-          id="departureAirportCode"
-          name="departureAirportCode"
-          value="JFK"
-          required
-        />
-      </div>
-      <div class="form-group">
-        <label for="destinationAirportCode">Destination Airport Code:</label>
-        <input
-          type="text"
-          class="form-control"
-          id="destinationAirportCode"
-          name="destinationAirportCode"
-          value="LHR"
-          required
-        />
-      </div>
+    <script>
+      const searchButton = document.getElementById("searchButton");
+      const resultsContainer = document.getElementById("results");
 
-      <!-- TODO: API does not support departure date, need to find a valid api -->
-      <!-- <div class="form-group">
-        <label for="departureDate">Departure Date:</label>
-        <input
-          type="date"
-          class="form-control"
-          id="departureDate"
-          name="departureDate"
-          value="2023-12-25"
-          required
-        />
-      </div> -->
-
-      <button type="submit" class="btn btn-primary">Search Flights</button>
-    </form>
-    <div id="results"></div>
-    <form th:action="@{/logout}" method="post">
-      <button type="submit">Sign Out</button>
-    </form>
-  </body>
-</html>
-<script>
-    document
-      .getElementById("flightForm")
-      .addEventListener("submit", function (event) {
-        event.preventDefault(); // Prevent the default form submission
-
-        const accessKey = document.querySelector(
-          'input[name="access_key"]'
-        ).value;
+      async function searchFlights() {
         const departureAirportCode = document.getElementById(
           "departureAirportCode"
         ).value;
         const destinationAirportCode = document.getElementById(
           "destinationAirportCode"
         ).value;
-        const flightStatus = document.getElementById("flightStatus").value;
+        const departureDate = document.getElementById("departureDate").value;
 
-        const apiUrl = `http://api.aviationstack.com/v1/flights?access_key=${accessKey}&iata=${departureAirportCode}&arr_iata=${destinationAirportCode}&flight_status=${flightStatus}`;
-        console.log(apiUrl); // Log the API URL to the console
+        if (
+          !departureAirportCode ||
+          !destinationAirportCode ||
+          !departureDate
+        ) {
+          displayError("Please fill in all fields");
+          return;
+        }
 
-        fetch(apiUrl)
-          .then((response) => response.json())
-          .then((data) => {
-            if (data.error && data.error.code === "function_access_restricted") {
-              displayError(
-                "This feature is not available under your current subscription plan."
-              );
-            } else {
-              displayResults(data);
-            }
-          })
-          .catch((error) => {
-            console.error("Error fetching data:", error);
-            displayError("An error occurred while fetching data.");
-          });
-      });
+        setLoading(true);
+        const apiUrl = `/api/searchFlights?origin=${departureAirportCode}&destination=${destinationAirportCode}&departureDate=${departureDate}`;
+
+        try {
+          const response = await fetch(apiUrl);
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+          const data = await response.json();
+          displayResults(data);
+        } catch (error) {
+          displayError("An error occurred while fetching flight data.");
+          console.error("Error fetching flight data:", error);
+        } finally {
+          setLoading(false);
+        }
+      }
 
       function displayResults(data) {
-      const resultsDiv = document.getElementById("results");
-      resultsDiv.innerHTML = ""; // Clear previous results
-
-      if (data.data && data.data.length > 0) {
-          data.data.forEach((flight) => {
-              const card = document.createElement("div");
-              card.className = "flight-card";
-              card.innerHTML = `
-                  <h3>Flight ${flight.flight.number}</h3>
-                  <div class="flight-info"><strong>Airline:</strong> ${flight.airline.name}</div>
-                  <div class="flight-info"><strong>Departure:</strong> ${flight.departure.airport}</div>
-                  <div class="flight-info"><strong>Arrival:</strong> ${flight.arrival.airport}</div>
-                  <div class="flight-status status-${flight.flight_status}">${flight.flight_status.toUpperCase()}</div>
-              `;
-              resultsDiv.appendChild(card);
+        resultsContainer.innerHTML = "";
+        if (
+          data &&
+          data.data &&
+          data.data.offers &&
+          data.data.offers.length > 0
+        ) {
+          const offers = data.data.offers.slice(0, 20);
+          offers.forEach((offer) => {
+            const card = document.createElement("div");
+            card.className = "card";
+            let cardContent = "<h2>Flight Offer</h2>";
+            offer.slices.forEach((slice, sliceIndex) => {
+              slice.segments.forEach((segment, segmentIndex) => {
+                cardContent += `
+                                <div>
+                                    <p><strong>From:</strong> ${
+                                      segment.origin.name
+                                    }</p>
+                                    <p><strong>To:</strong> ${
+                                      segment.destination.name
+                                    }</p>
+                                    <p><strong>Departure:</strong> ${new Date(
+                                      segment.departing_at
+                                    ).toLocaleString()}</p>
+                                    <p><strong>Arrival:</strong> ${new Date(
+                                      segment.arriving_at
+                                    ).toLocaleString()}</p>
+                                </div>
+                            `;
+              });
+            });
+            cardContent += `<p><strong>Price:</strong> ${offer.total_amount} ${offer.total_currency}</p>`;
+            card.innerHTML = cardContent;
+            resultsContainer.appendChild(card);
           });
-      } else {
-          resultsDiv.innerHTML = "<p>No flights found.</p>";
-      }
-  }
-
-  function displayError(message) {
-      const resultsDiv = document.getElementById("results");
-      resultsDiv.innerHTML = `<div class="error-message">${message}</div>`;
-  }
-      const resultsDiv = document.getElementById("results");
-      resultsDiv.innerHTML = ""; // Clear previous results
-
-      if (data.data && data.data.length > 0) {
-        const table = document.createElement("table");
-        const headerRow = document.createElement("tr");
-        headerRow.innerHTML =
-          "<th>Flight Number</th><th>Airline</th><th>Departure</th><th>Arrival</th><th>Status</th>";
-        table.appendChild(headerRow);
-
-        data.data.forEach((flight) => {
-          const row = document.createElement("tr");
-          row.innerHTML = `
-                      <td>${flight.flight.number}</td>
-                      <td>${flight.airline.name}</td>
-                      <td>${flight.departure.airport}</td>
-                      <td>${flight.arrival.airport}</td>
-                      <td>${flight.flight_status}</td>
-                  `;
-          table.appendChild(row);
-        });
-
-        resultsDiv.appendChild(table);
-      } else {
-        resultsDiv.innerHTML = "<p>No flights found.</p>";
+        } else {
+          displayError("No flights found.");
+        }
       }
 
-    function displayError(message) {
-      const resultsDiv = document.getElementById("results");
-      resultsDiv.innerHTML = `<p style="color: red;">${message}</p>`;
-    }
-</script>
+      function displayError(message) {
+        resultsContainer.innerHTML = `<p class="error">${message}</p>`;
+      }
+
+      function setLoading(isLoading) {
+        searchButton.disabled = isLoading;
+        searchButton.textContent = isLoading
+          ? "Searching..."
+          : "Search Flights";
+        if (isLoading) {
+          resultsContainer.innerHTML = '<p class="loading">Loading...</p>';
+        }
+      }
+    </script>
+  </body>
+</html>

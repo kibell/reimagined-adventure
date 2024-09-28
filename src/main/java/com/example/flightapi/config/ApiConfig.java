@@ -1,15 +1,23 @@
 package com.example.flightapi.config;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.client.RestTemplate;
 
 @Configuration
 public class ApiConfig {
 
-    @Value("${api.key}")
-    private String apiKey;
+    @Value("${duffel.accessToken}")
+    private String duffelAccessToken;
 
-    public String getApiKey() {
-        return apiKey;
+    @Bean
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
+    }
+
+    @Bean
+    public String duffelAccessToken() {
+        return duffelAccessToken;
     }
 }
