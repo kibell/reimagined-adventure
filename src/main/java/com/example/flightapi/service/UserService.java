@@ -9,19 +9,24 @@ import org.springframework.stereotype.Service;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final XMLUserService xmlUserService;
 
     @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, XMLUserService xmlUserService) {
         this.userRepository = userRepository;
+        this.xmlUserService = xmlUserService;
     }
 
     public void register(User user) {
         userRepository.save(user);
+        xmlUserService.register(user.getUsername(), user.getPassword());
     }
 
     public boolean authenticate(String username, String password) {
-        return userRepository.findByUsername(username)
+        boolean dbAuth = userRepository.findByUsername(username)
                 .map(user -> user.getPassword().equals(password))
                 .orElse(false);
+        boolean xmlAuth = xmlUserService.authenticate(username, password);
+        return dbAuth || xmlAuth;
     }
 }
