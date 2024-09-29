@@ -1,7 +1,9 @@
+// this class represents a user  model 
 package com.example.flightapi.model;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+// Indicates that this class can be converted to XML
 @XmlRootElement
 public class User {
     private String username;

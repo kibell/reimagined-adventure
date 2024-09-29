@@ -1,3 +1,5 @@
+// This configuration class sets up security configurations for the application, including login, logout, and access control.
+
 package com.example.flightapi.config;
 
 import org.springframework.context.annotation.Bean;
@@ -14,18 +16,22 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
             .authorizeRequests()
-                .antMatchers("/login", "/register", "/css/**", "/js/**").permitAll() // Allow access to login and static resources
-                .anyRequest().authenticated() // Restrict access to authenticated users
+              // Allow access to login, register, and static resources (CSS, JS)
+                .antMatchers("/login", "/register", "/css/**", "/js/**").permitAll() 
+                // Restrict access to authenticated users
+                .anyRequest().authenticated() 
                 .and()
             .formLogin()
-                .loginPage("/login") // Custom login page
-                .defaultSuccessUrl("/", true) // Redirect to index.html on successful login
+            // Custom login page
+                .loginPage("/login")
+                // Redirect to index.html on successful login
+                .defaultSuccessUrl("/", true)
                 .permitAll()
                 .and()
             .logout()
                 .permitAll();
     }
-
+// Defines a bean for password encoding using BCrypt
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
