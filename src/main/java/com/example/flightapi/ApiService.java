@@ -1,3 +1,4 @@
+// This service class handles API requests to the aviationstack API.
 package com.example.flightapi;
 
 import org.springframework.http.ResponseEntity;
@@ -25,16 +26,19 @@ public class ApiService {
         return formatResponseAsHtml(responseBody);
     }
 
+    // Method to format the JSON response as an HTML string
     private String formatResponseAsHtml(String jsonResponse) {
         JSONObject jsonObject = new JSONObject(jsonResponse);
         JSONArray flights = jsonObject.getJSONArray("data");
 
         StringBuilder htmlResponse = new StringBuilder();
+        // Starting the HTML document
         htmlResponse.append("<html><body>");
         htmlResponse.append("<h1>Flight Information</h1>");
         htmlResponse.append("<table border='1'>");
         htmlResponse.append("<tr><th>Flight Number</th><th>Airline</th><th>Departure</th><th>Arrival</th><th>Status</th></tr>");
-
+        
+        // Iterating over the flights array and adding each flight's details to the table
         for (int i = 0; i < flights.length(); i++) {
             JSONObject flight = flights.getJSONObject(i);
             String flightNumber = flight.getJSONObject("flight").getString("number");

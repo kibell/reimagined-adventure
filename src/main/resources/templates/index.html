@@ -4,76 +4,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Flight Search</title>
-    <style>
-      body {
-        font-family: "Arial", sans-serif;
-        background: linear-gradient(135deg, #87ceeb, #e0f6ff);
-        height: 100vh;
-        overflow: hidden;
-      }
-      h1 {
-        text-align: center;
-      }
-      .search-container {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-        margin-bottom: 20px;
-      }
-      .search-container input,
-      .search-container button {
-        padding: 10px;
-        font-size: 16px;
-      }
-      .search-container input {
-        flex: 1;
-        min-width: 200px;
-      }
-      .search-container button {
-        background-color: #4caf50;
-        color: white;
-        border: none;
-        cursor: pointer;
-        transition: background-color 0.3s;
-      }
-      .search-container button:hover {
-        background-color: #45a049;
-      }
-      .search-container button:disabled {
-        background-color: #cccccc;
-        cursor: not-allowed;
-      }
-      .results-container {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-        gap: 20px;
-      }
-      .card {
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        padding: 15px;
-        background-color: #f9f9f9;
-      }
-      .error {
-        color: red;
-        text-align: center;
-      }
-      .loading {
-        text-align: center;
-      }
-      @media (max-width: 600px) {
-        .search-container {
-          flex-direction: column;
-        }
-        .search-container input,
-        .search-container button {
-          width: 100%;
-        }
-      }
-    </style>
+    <link rel="stylesheet" href="/css/styles.css" />
   </head>
   <body>
     <h1>Flight Search</h1>
+    <!-- Form for searching flights -->
     <div class="search-container">
       <input
         type="text"
@@ -125,14 +60,17 @@
         const apiUrl = `/api/searchFlights?origin=${departureAirportCode}&destination=${destinationAirportCode}&departureDate=${departureDate}`;
 
         try {
+          // Fetches data from the API
           const response = await fetch(apiUrl);
           if (!response.ok) {
             throw new Error("Network response was not ok");
           }
+           // Parses the response as JSON
           const data = await response.json();
           displayResults(data);
         } catch (error) {
           displayError("An error occurred while fetching flight data.");
+           // Logs the error to the console
           console.error("Error fetching flight data:", error);
         } finally {
           setLoading(false);
@@ -149,6 +87,7 @@
         ) {
           const offers = data.data.offers.slice(0, 20);
           offers.forEach((offer) => {
+            // Creates a new div element for each flight
             const card = document.createElement("div");
             card.className = "card";
             let cardContent = "<h2>Flight Offer</h2>";
@@ -185,6 +124,7 @@
         resultsContainer.innerHTML = `<p class="error">${message}</p>`;
       }
 
+      //Function thath Shows or hides the loading indicato
       function setLoading(isLoading) {
         searchButton.disabled = isLoading;
         searchButton.textContent = isLoading
